@@ -11,13 +11,14 @@ app.use(express.static("images"));
 
 app.get("/", function (req, res) {
     res.sendFile(__dirname+"/index.html")
+    console.log('hw');
 })
 
 app.post("/compile", function (req, res) {
     const code = req.body.code;
     const customInput = req.body.input;
     const langId = req.body.lang;
-
+ console.log('compiling');
     try {
       
         const formData = {
@@ -99,6 +100,7 @@ const checkStatus = async (token, res) => {
     }
 };
 
-app.listen(8000 || process.env.port, () => {
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
     console.log("Server is running on port 8000");
 });
