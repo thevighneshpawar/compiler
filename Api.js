@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const axios = require("axios");
+require('dotenv').config();
+
 
 app.use(bodyParser.json());
 app.use(express.static("images"));
@@ -31,7 +33,7 @@ app.post("/compile", function (req, res) {
             headers: {
                 "content-type": "application/json",
                 "Content-Type": "application/json",
-                'X-RapidAPI-Key': '4e726ab322mshf1d210ad270f62ap1d3a13jsn1ad4473e03d5',
+                'X-RapidAPI-Key': process.env.key,
                 'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
             },
             data: formData,
@@ -61,7 +63,7 @@ const checkStatus = async (token, res) => {
         url: "https://judge0-ce.p.rapidapi.com/submissions/" + token,
         params: { base64_encoded: "true", fields: "*" },
         headers: {
-            'X-RapidAPI-Key': '4e726ab322mshf1d210ad270f62ap1d3a13jsn1ad4473e03d5',
+            'X-RapidAPI-Key': process.env.key,
             'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
         },
     };
@@ -97,6 +99,6 @@ const checkStatus = async (token, res) => {
     }
 };
 
-app.listen(8000, () => {
+app.listen(8000 || process.env.port, () => {
     console.log("Server is running on port 8000");
 });
