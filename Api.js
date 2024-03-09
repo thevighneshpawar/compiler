@@ -1,18 +1,66 @@
-const express = require("express");
+import express from 'express';
+import bodyParser from 'body-parser';
+import { Octokit } from '@octokit/core';
+import axios from 'axios';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const app = express();
-const bodyParser = require("body-parser");
-const axios = require("axios");
-require('dotenv').config();
 
+// Mimic __dirname in ES Module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static("images"));
+app.use(express.static(`${__dirname}/public`));
+
+// Octokit.js
+const octokit = new Octokit({
+  auth: process.env.githubgist
+});
 
 
 app.get("/", function (req, res) {
     res.sendFile(__dirname+"/index.html")
-    console.log('hw');
 })
+
+app.post("/saveFile", async (req, res) => {
+  try {
+    const { fileName, fileData } = req.body;
+    const gistUrl = await createGist(fileName, fileData);
+    res.json({ gistUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Failed to save file");
+  }
+});
+
+// Function to create a Gist
+async function createGist(fileName, fileData) {
+  const response = await octokit.request('POST /gists', {
+    description: 'Example of a gist',
+    'public': true,
+    files: {
+      [fileName]: {
+        content: fileData
+      }
+    },
+    "language": "plaintext",
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  });
+  if (response.status != 201) {
+    throw new Error("Failed to create Gist");
+  }
+
+  return response.data.html_url;
+}
+
+
 
 app.post("/compile", function (req, res) {
     const code = req.body.code;
