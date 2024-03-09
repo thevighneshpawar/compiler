@@ -119,7 +119,7 @@ run.addEventListener('click', async function () {
 
     showLoading()
 
-    const response = await fetch('http://localhost:8000/compile', {
+    const response = await fetch('/compile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
