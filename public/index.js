@@ -56,14 +56,22 @@ popup.addEventListener('click', function (event) {
   }
 })
 
-savename.addEventListener('click', async function () {
-  console.log('clicked')
-  try {
-    popup.innerHTML =`<img class="w-25" src="/loading.gif"/>`
-    const file_Name = fileName.value
-    const fileData = editor.getValue()
+document.addEventListener('click', function (event) {
+  // Check if the click event is from the save button
+  if (event.target && event.target.id === 'savename') {
+    saveFileHandler();
+  }
+});
 
-    console.log(file_Name)
+// Define the event handler for saving the file
+async function saveFileHandler() {
+  console.log('clicked');
+  try {
+    popup.innerHTML = `<img class="w-25" src="/loading.gif"/>`;
+    const file_Name = fileName.value;
+    const fileData = editor.getValue();
+
+    console.log(file_Name);
     // Make a POST request to your server
     const response = await fetch('/saveFile', {
       method: 'POST',
@@ -74,24 +82,24 @@ savename.addEventListener('click', async function () {
         fileName: file_Name,
         fileData: fileData
       })
-    })
+    });
 
     if (!response.ok) {
-      throw new Error('Failed to save file')
+      throw new Error('Failed to save file');
     }
 
     // Assuming the server responds with the URL of the saved file
-    const responseData = await response.json()
+    const responseData = await response.json();
 
-    console.log(responseData)
+    console.log(responseData);
 
     // Show a popup with the URL of the saved file
-    popup.innerHTML = `<a href="${responseData.gistUrl}" target="_blank" class="d-block p-4" a>Clik to Access File</a>
-           <button id="close" class="btn btn-warning m-3">Close</button>`
+    popup.innerHTML = `<a href="${responseData.gistUrl}" target="_blank" class="d-block p-4" a>Click to Access File</a>
+           <button id="close" class="btn btn-warning m-3">Close</button>`;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-})
+}
 
 
 
