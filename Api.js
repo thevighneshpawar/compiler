@@ -19,7 +19,7 @@ app.use(express.static(`${__dirname}/public`));
 
 // Octokit.js
 const octokit = new Octokit({
-  auth: process.env.githubgist
+  auth: process.env.githubgist;
 });
 
 
